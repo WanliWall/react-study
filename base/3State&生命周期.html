@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>State&生命周期</title>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    // 一、函数组件
+    // function Clock(props) {
+    //   return (
+    //     <div>
+    //       <h1>Hello, world!</h1>
+    //       <h2>It is {props.date.toLocaleTimeString()}</h2>
+    //     </div>
+    //   )
+    // }
+
+    // 二、class组件
+    /*
+      将函数组件转换为class组件
+      1.创建一个同名的ES6 class，并且继承于React.Component
+      2.添加一个空的render()方法
+      3.将函数体移动到render()方法中
+      4.在render()方法中使用this.props替换props
+      5.删除剩余的空函数声明
+    */
+    // class Clock extends React.Component {
+    //   render() {
+    //     <div>
+    //       <h1>Hello, world!</h1>
+    //       <h2>It is {this.props.date.toLocaleTimeString()}</h2>  
+    //     </div>
+    //   }
+    // }
+
+    /*
+      将date从props移动到state中
+    */
+    class Clock extends React.Component {
+      constructor(props) {
+        super(props)
+        this.state = {
+          date: new Date()
+        }
+      }
+
+      componentDidMount() {
+        this.timerID = setInterval(() => this.tick(), 1000)
+        console.log('componentDidMount', this.timerID, this.state)
+      }
+
+      componentWillDidUnmount() {
+        clearInterval(this.timerID)
+        console.log('componentWillDidUnmount', this.timerID)
+      }
+
+      tick() {
+        this.setState({
+          date: new Date()
+        })
+      }
+
+      render() {
+        return (
+          <div>
+            <h1>Hello, world!</h1>
+            <h2>It is {this.state.date.toLocaleTimeString()}</h2>  
+          </div>
+        )
+      }
+    }
+    ReactDOM.render(
+      <Clock />,
+      document.getElementById('root')
+    )
+    /*
+      三、setState()
+      1.不要直接修改State
+      2.State的更新可能是异步的
+        出于性能考虑，React可能会把多个setState()调用合并成一个调用
+        解决办法：可以让setState()接受一个函数而不是一个对象
+      3.State的更新会被合并
+        调用setState()时，React会把提供的对象合并到当前的state
+    */
+    /*
+      四、数据是向下流动的
+      1.组件无法访问其他组件的state
+      2.组件可以选择把其state作为props向下传递到其子组件中
+    */
+  </script>
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</body>
+</html>

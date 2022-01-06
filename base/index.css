@@ -1,0 +1,25 @@
+.MyButton {
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  padding: 12px 20px;
+  font-size: 14px;
+  background: #fff;
+  color: #606266;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  text-align: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  outline: none;
+}
+.MyButton:focus, .MyButton:hover {
+  color: #409eff;
+  border-color: #c6e2ff;
+  background-color: #ecf5ff;
+}
+.MyButton:active {
+  color: #3a8ee6;
+  border-color: #3a8ee6;
+  outline: none;
+}

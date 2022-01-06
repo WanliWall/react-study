@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>事件处理</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    /*
+      一、语法
+      1.事件命名采用小驼峰式，而不是纯小写 onClick
+      2.JSX，需要传入一个函数作为事件处理函数，而不是一个字符串
+        onClick={handleClick}
+    */
+    // 使用bind绑定this，构造器中
+    class Toggle extends React.Component {
+      constructor(props) {
+        super(props)
+        this.state = { isToggleOn: true }
+
+        // 为了在回调中使用 `this`，这个绑定是必不可少的
+        this.handleClickBind = this.handleClick.bind(this)
+      }
+
+      handleClick() {
+        this.setState(prevState => ({
+          isToggleOn: !prevState.isToggleOn
+        }))
+      }
+
+      render() {
+        return (
+          <button className="MyButton" onClick={this.handleClickBind}>
+            {this.state.isToggleOn ? 'ON' : 'OFF'}
+          </button>
+        )
+      }
+    }
+    // 使用 class fields 绑定
+    // Create React App 默认启用此语法
+    // class Log extends React.Component() {
+    //   handleClick = () => {
+    //     console.log(this)
+    //   }
+
+    //   render() {
+    //     return (
+    //       <button className="MyButton" onClick={this.handleClick}>
+    //         Click me
+    //       </button>
+    //     )
+    //   }
+    // }
+    // 使用箭头函数绑定this
+    /*
+      问题：每次渲染都会创建不同的回调函数，如果该回调函数作为props传入子组件时，
+      可能会进行额外的重新渲染
+      建议：在构造器中绑定或使用class fields语法
+    */
+    class Button extends React.Component {
+      // constructor(props) {
+      //   super(props)
+      // }
+      handleClick() {
+        console.log('this is:', this)
+      }
+
+      render() {
+        return (
+          <button className="MyButton" onClick={() => this.handleClick()}>
+            {this.props.text}
+          </button>
+        )
+      }
+    }
+    // 二、传参
+    /*
+      <button onClick={(e) => this.deleteRow(id, e)}>Delete Row</button>
+      <button onClick={this.deleteRow.bind(this, id)}>Delete Row</button>
+      两种方式等价，箭头函数，Function.prototype.bind
+    */
+
+    function App() {
+      return (
+        <div>
+          <Toggle />
+          <Button text="点击" />
+        </div>
+      )
+    }
+
+    ReactDOM.render(
+      <App />,
+      document.getElementById('root')
+    )
+  </script>
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</body>
+
+</html>
