@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>表单</title>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    /*
+      受控组件
+      输入的值始终由React的state驱动
+      1.HTML中，表单元素通常自己维护state，并根据用户输入进行更新
+      2.React中，只能通过setState()来更新
+      3.将两者结合起来，渲染表单的React组件还控制着输入过程中表单发生的操作
+    */
+    class NameForm extends React.Component {
+      constructor(props) {
+        super(props)
+        this.state = {value: ''}
+        this.handleChange = this.handleChange.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
+      }
+
+      handleChange(e) {
+        this.setState({value: e.target.value})
+      }
+      handleSubmit(e) {
+        alert('提交的名字：' + this.state.value)
+      }
+
+      render() {
+        return (
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              名字：
+              <input type="text" value={this.state.value} onChange={this.handleChange} />  
+            </label>
+            <input type="submit" value="提交" />
+          </form>
+        )
+      }
+    }
+
+    // textarea
+    class EaasyForm extends React.Component {
+      constructor(props) {
+        super(props)
+        this.state = {value: '请输入。。。'}
+        this.handleChange = this.handleChange.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
+      }
+
+      handleChange(e) {
+        this.setState({value: e.target.value})
+      }
+      handleSubmit(e) {
+        alert('提交的内容：' + this.state.value)
+      }
+
+      render() {
+        return (
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              文章：
+              <textarea value={this.state.value} onChange={this.handleChange} />  
+            </label>
+            <input type="submit" value="提交" />
+          </form>
+        )
+      }
+    }
+    
+    // select
+    class FlavorForm extends React.Component {
+      constructor(props) {
+        super(props)
+        this.state = {value: 'coconut'}
+
+        this.handleChange = this.handleChange.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
+      }
+
+      handleChange(event) {
+        this.setState({value: event.target.value})
+      }
+
+      handleSubmit(event) {
+        alert('你喜欢的风味是: ' + this.state.value)
+        event.preventDefault()
+      }
+
+      render() {
+        return (
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              选择你喜欢的风味:
+              <select value={this.state.value} onChange={this.handleChange}>
+                <option value="grapefruit">葡萄柚</option>
+                <option value="lime">酸橙</option>
+                <option value="coconut">椰子</option>
+                <option value="mango">芒果</option>
+              </select>
+            </label>
+            <input type="submit" value="提交" />
+          </form>
+        )
+      }
+    }
+
+    // 处理多个输入
+    /*
+      input，可以给每个元素添加name属性，event.target.name拿值
+    */
+    function App() {
+      return (
+        <div>
+          <NameForm />
+          <EaasyForm />
+          <FlavorForm />
+        </div>
+      )
+    }
+    ReactDOM.render(
+      <App />,
+      document.getElementById('root')
+    )
+  </script>
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</body>
+</html>

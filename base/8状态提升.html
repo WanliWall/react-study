@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>状态提升</title>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    function BoilingVerdict(props) {
+      if(props.celsius >= 100) {
+        return <p>The water would boil.</p>
+      }
+      return <p>The water would not boil.</p>
+    }
+
+    class Calc extends React.Component {
+      constructor(props) {
+        super(props)
+        // this.handleChange = this.handleChange.bind(this)
+        this.handleC = this.handleC.bind(this)
+        this.handleF = this.handleF.bind(this)
+        this.state = { temperature: '', scale: 'c' }
+      }
+
+      // handleChange(e) {
+      //   this.setState({ temperature: e.target.value })
+      // }
+
+      handleC(temperature) {
+        this.setState({ scale: 'c', temperature })
+      }
+      handleF(temperature) {
+        this.setState({ scale: 'f', temperature })
+      }
+
+      render() {
+        const temperature = this.state.temperature
+        const scale = this.state.scale
+        const c = scale === 'f' ? tryConvert(temperature, toC) : temperature
+        const f = scale === 'c' ? tryConvert(temperature, toF) : temperature
+
+        return (
+          // <fieldset>
+          //   <legend>输入摄氏度</legend>  
+          //   <input 
+          //     value={temperature}
+          //     onChange={this.handleChange}
+          //   />
+          //   <BoilingVerdict 
+          //     celsius={parseFloat(temperature)}
+          //   />
+          // </fieldset>
+          <div>
+            <TemperatureInput  scale="c" temperature={c} onTChange={this.handleC} />
+            <TemperatureInput  scale="f" temperature={f} onTChange={this.handleF} />
+            <BoilingVerdict celsius={parseFloat(c)} />
+          </div>
+        )
+      }
+    }
+
+    // 抽离输入框
+
+    const scaleNames = {
+      c: '摄氏度',
+      f: '华氏度'
+    }
+
+    class TemperatureInput extends React.Component {
+      constructor(props) {
+        super(props)
+        this.handleChange = this.handleChange.bind(this)
+        this.state = { temperature: '' }
+      }
+
+      handleChange(e) {
+        // this.setState({ temperature: e.target.value })
+        this.props.onTChange(e.target.value) // 父组件传入，类比Vue子组件emit
+      }
+
+      render() {
+        // const temperature = this.state.temperature
+        const temperature = this.props.temperature // 1.state => props
+        const scale = this.props.scale
+        return (
+          <fieldset>
+            <legend>输入{scaleNames[scale]}</legend>  
+            <input 
+              value={temperature}
+              onChange={this.handleChange}
+            />
+          </fieldset>
+        )
+      }
+    }
+
+    // 转换函数
+    function toC(f) {
+      return (f - 32) * 5 / 9
+    }
+    function toF(c) {
+      return (c * 9 / 5) + 32
+    }
+    function tryConvert(t, convert) {
+      const inputValue = parseFloat(t)
+      if (Number.isNaN(inputValue)) {
+        return ''
+      }
+      const output = convert(inputValue)
+      const rounded = Math.round(output * 1000) / 1000
+      return rounded.toString()
+    }
+    /*
+      两个输入框各自保存数据
+      两个输入框能够同步
+      将共享的state向上移动到最近共同父组件
+      1.将输入框组件中的state转为props
+    */
+
+    ReactDOM.render(
+      <Calc />,
+      document.getElementById('root')
+    )
+  </script>
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</body>
+</html>
